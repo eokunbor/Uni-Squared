@@ -1,69 +1,94 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
-import { Link } from 'expo-router'
 
+import { StyleSheet, Text, View, Image, Animated } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Logo from '../assets/logos/logo1.png'
-
-// themed components 
 import ThemedView from '../components/ThemedView'
+import OnboardingScreen from '../components/OnboardingScreen'
 
-const Home = () => {
+const SplashScreen = () => {
+  const fadeAnim = useRef(new Animated.Value(0)).current
+  const scaleAnim = useRef(new Animated.Value(0.8)).current
+  const router = useRouter()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+
+
+  useEffect(() => {
+    showSplash()
+  }, [])
+
+  const showSplash= () => {
+
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue:1,
+        friction: 4,
+        useNativeDriver: true,
+      }),
+    ]).start()
+
+
+    setTimeout(() => {
+      setShowOnboarding(true)
+    }, 2500)
+  }
+
+
+  const handleOnboardingComplete = () => {
+   router.replace('/home')
+    } 
+  if (showOnboarding) {
+    return <OnboardingScreen onComplete={handleOnboardingComplete} />
+  }
+
   return (
-    <ThemedView style= {styles.container}>
-      <Image source= {Logo} style={styles.img}/>
-
-      <Text style= {styles.title}>Uni²</Text>
-
-      <Text style={{marginTop:10, marginBottom: 30}}>
-        Reading list app
-      </Text>
-
-      <Link href="/about" style={styles.link}>About Page</Link>
-      <Link href="/contact" style={styles.link}>Contact Page</Link>
-
-
-      {/*<View style={styles.card}>
-        <Text>Hola! Hola! Hola!</Text>
-      </View> */}
-
+    <ThemedView style={styles.container}>
+      <Animated.View
+        style={[
+          styles.logoContainer,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <Image source={Logo} style={styles.img} />
+        <Text style={styles.title}>Uni²</Text>
+        <Text style={styles.subtitle}>Reading list app</Text>
+      </Animated.View>
     </ThemedView>
   )
 }
 
-export default Home
+export default SplashScreen
 
 const styles = StyleSheet.create({
   container: {
-    position:'absolute',
-    backgroundColor: '#rgb(245, 231, 196)', 
-    flex:1,
-    left: 0,
-    right:0,
-    top: 0,
-    bottom: 0, 
-    alignItems: 'center', 
-    justifyContent: 'center'
+    flex: 1,
+    backgroundColor: '#f5e7c4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+  },
+  img: {
+    marginBottom: 20,
   },
   title: {
     fontWeight: 'bold',
-    fontSize: '18'
+    fontSize: 32,
+    color: '#333',
+    marginBottom: 8,
   },
-
-  img:{
-
-    marginVertical: 20,
-
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
   },
-
-  link:{
-    marginVertical:10,
-    borderBottomWidth:1
-  }
-
-/*card:{
-  backgroundColor: '#rgb(245, 231, 196)', 
-  padding: 20,
-  borderRadius: 5,
-  boxShadow: '4px 4px rgba(0,0,0,0.1)', 
-*/
-
 })
