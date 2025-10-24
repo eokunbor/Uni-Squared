@@ -41,7 +41,7 @@ const SplashScreen = () => {
 
 
   const handleOnboardingComplete = () => {
-   router.replace('/home')
+   router.replace('/(auth)/signUp')
     } 
   if (showOnboarding) {
     return <OnboardingScreen onComplete={handleOnboardingComplete} />
@@ -59,8 +59,6 @@ const SplashScreen = () => {
         ]}
       >
         <Image source={Logo} style={styles.img} />
-        <Text style={styles.title}>Uni²</Text>
-        <Text style={styles.subtitle}>Reading list app</Text>
       </Animated.View>
     </ThemedView>
   )
