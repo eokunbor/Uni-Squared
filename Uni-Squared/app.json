@@ -3,6 +3,7 @@
     "scheme": "unisquared",
     "name": "Uni-Squared",
     "slug": "Uni-Squared",
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,6 +16,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "dev.eokunbor.unisquared",
       "splash": {
         "image": "./assets/splash-icon.png",
         "resizeMode": "contain",
@@ -26,6 +28,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f5e7c4"
       },
+      "package": "dev.eokunbor.unisquared",
       "splash": {
         "image": "./assets/splash-icon.png",
         "resizeMode": "contain",

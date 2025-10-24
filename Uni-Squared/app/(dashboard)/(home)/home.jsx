@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, ScrollView, Image, View, TouchableOpacity, Text } from 'react-native'
 import { Link } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import Logo from '../assets/logos/logo1.png'
-import ThemedView from '../components/ThemedView'
+import Logo from '../../../assets/logos/logo1.png'
+import ThemedView from '../../../components/ThemedView'
 
 const Home = () => {
   return (
