@@ -1,13 +1,6 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import React from 'react';
+import ClubOrgSearchScreen from './screens/HomeScreen';
 
-const Home = () => {
-  return (
-    <View>
-      <Text>Home</Text>
-    </View>
-  )
+export default function App() {
+  return <ClubOrgSearchScreen />;
 }
-
-export default Home
-
-const styles = StyleSheet.create({})
