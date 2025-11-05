@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
   wrap: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    backgroundColor: '#f1e0c5', 
+    backgroundColor: '#fff5ddff', 
     borderRadius: 12, 
     borderWidth: 1, 
-    borderColor: '#71816d', 
+    borderColor: '#e6dbc2ff', 
     paddingHorizontal: 10, 
     paddingVertical: 8, 
     gap: 8 
