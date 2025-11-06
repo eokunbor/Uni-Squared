@@ -1,240 +1,124 @@
-import { StyleSheet, ScrollView, Image, View, TouchableOpacity, Text } from 'react-native'
-import { Link } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import Logo from '../../../assets/logos/logo1.png'
-import ThemedView from '../../../components/ThemedView'
-
-const Home = () => {
-  return (
-    <ThemedView style={styles.container}>
-      <StatusBar style="dark" />
-      
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Image source={Logo} style={styles.logoSmall} />
-          <Text style={styles.headerTitle}>Uni²</Text>
-        </View>
-
-        {/* Welcome Section */}
-        <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeTitle}>Welcome Back!</Text>
-          <Text style={styles.welcomeSubtitle}>
-            Continue your reading journey
-          </Text>
-        </View>
-
-        {/* Stats Cards */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Books Read</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>5</Text>
-            <Text style={styles.statLabel}>In Progress</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>28</Text>
-            <Text style={styles.statLabel}>Want to Read</Text>
-          </View>
-        </View>
-
-        {/* Quick Actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-          
-          <TouchableOpacity style={styles.actionCard}>
-            <View style={styles.actionIcon}>
-              <Text style={styles.actionIconText}>📚</Text>
-            </View>
-            <View style={styles.actionContent}>
-              <Text style={styles.actionTitle}>My Reading List</Text>
-              <Text style={styles.actionSubtitle}>View all your books</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionCard}>
-            <View style={styles.actionIcon}>
-              <Text style={styles.actionIconText}>➕</Text>
-            </View>
-            <View style={styles.actionContent}>
-              <Text style={styles.actionTitle}>Add New Book</Text>
-              <Text style={styles.actionSubtitle}>Expand your collection</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionCard}>
-            <View style={styles.actionIcon}>
-              <Text style={styles.actionIconText}>🎯</Text>
-            </View>
-            <View style={styles.actionContent}>
-              <Text style={styles.actionTitle}>Reading Goals</Text>
-              <Text style={styles.actionSubtitle}>Track your progress</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Footer Links */}
-        <View style={styles.footer}>
-          <Link href="/about" asChild>
-            <TouchableOpacity style={styles.footerLink}>
-              <Text style={styles.footerLinkText}>About</Text>
-            </TouchableOpacity>
-          </Link>
-          <View style={styles.footerDivider} />
-          <Link href="/contact" asChild>
-            <TouchableOpacity style={styles.footerLink}>
-              <Text style={styles.footerLinkText}>Contact</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
-      </ScrollView>
-    </ThemedView>
-  )
+import React, { useMemo, useState } from 'react';
+import { View, Text, SectionList, FlatList, StyleSheet, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import SearchBar from '../../components/SearchBar';
+import SectionHeader from '../../components/SectionHeader';
+import ClubCard from '../../components/ClubCard';
+import { CATEGORIES, MOCK_BY_CATEGORY } from '../../data/clubs';
+export default function HomeScreen({ navigation }) {
+const [query, setQuery] = useState('');
+const sections = useMemo(() => {
+const q = query.trim().toLowerCase();
+return CATEGORIES.map((cat) => {
+const all = MOCK_BY_CATEGORY[cat] || [];
+const filtered = q
+? all.filter((c) =>
+(c.name + ' ' + c.description + ' ' + c.category)
+.toLowerCase()
+.includes(q)
+)
+: all;
+return {
+title: cat,
+data: filtered.length ? [{ key: 'row', items: filtered }] : [],
+};
+}).filter((s) => s.data.length > 0);
+}, [query]);
+return (
+<View style={styles.container}>
+{/* iOS will let this be transparent; Android uses translucent */}
+<StatusBar
+translucent
+backgroundColor="transparent"
+barStyle="dark-content"
+/>
+{/* put gradient BEHIND the safe area so it covers top + bottom */}
+<LinearGradient
+colors={['#f8f0dcff', '#F5E7C4', '#F5E7C4', '#e8c3a3ff']}
+style={styles.gradient}
+start={{ x: 0, y: 0 }}
+end={{ x: 0, y: 1 }}
+>
+{/* tell SafeAreaView NOT to add top/left/right padding */}
+<SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+<View style={styles.top}>
+<SearchBar value={query} onChangeText={setQuery} />
+</View>
+<SectionList
+sections={sections}
+keyExtractor={(item) => item.key}
+contentContainerStyle={{ paddingBottom: 32 }}
+stickySectionHeadersEnabled={false}
+renderSectionHeader={({ section }) => (
+<View style={styles.sectionHeaderWrap}>
+<SectionHeader
+title={section.title}
+onViewMore={() =>
+navigation?.navigate?.('Category', { cat: section.title })
 }
-
-export default Home
-
+/>
+</View>
+)}
+renderItem={({ item }) => (
+<FlatList
+data={item.items}
+keyExtractor={(club) => club.id}
+horizontal
+showsHorizontalScrollIndicator={false}
+contentContainerStyle={styles.hList}
+renderItem={({ item: club }) => (
+<View style={styles.hItem}>
+<ClubCard
+club={club}
+onPress={() =>
+navigation?.navigate?.('ClubDetail', { id: club.id })
+}
+/>
+</View>
+)}
+/>
+)}
+ListEmptyComponent={
+<Text style={styles.empty}>No clubs match your search.</Text>
+}
+/>
+</SafeAreaView>
+</LinearGradient>
+</View>
+);
+}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5e7c4',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 60,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  logoSmall: {
-    width: 40,
-    height: 40,
-    marginRight: 12,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  welcomeSection: {
-    marginBottom: 30,
-  },
-  welcomeTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 8,
-  },
-  welcomeSubtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginHorizontal: 4,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  statNumber: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#8b5e3c',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
-  },
-  actionCard: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  actionIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 12,
-    backgroundColor: '#f5e7c4',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  actionIconText: {
-    fontSize: 24,
-  },
-  actionContent: {
-    flex: 1,
-  },
-  actionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  actionSubtitle: {
-    fontSize: 14,
-    color: '#666',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  footerLink: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  footerLinkText: {
-    fontSize: 14,
-    color: '#8b5e3c',
-    fontWeight: '600',
-  },
-  footerDivider: {
-    width: 1,
-    height: 16,
-    backgroundColor: '#ccc',
-  },
-})
+container: {
+flex: 1,
+// make sure the root isn’t white
+backgroundColor: '#f8f0dcff',
+},
+gradient: {
+flex: 1,
+},
+screen: {
+flex: 1,
+},
+top: {
+padding: 16,
+paddingBottom: 8,
+},
+sectionHeaderWrap: {
+paddingHorizontal: 16,
+marginTop: 8,
+marginBottom: 6,
+},
+hList: {
+paddingHorizontal: 12,
+},
+hItem: {
+width: 180,
+marginRight: 12,
+},
+empty: {
+textAlign: 'center',
+color: '#a87955ff',
+marginTop: 24,
+},
+});
