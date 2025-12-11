@@ -4,7 +4,8 @@
 
 <p id="description">Uni Squared is a campus event and community app that helps students discover what’s happening around them and get more involved on campus. You can explore live maps of events search for clubs and organizations and join or register for activities that match your interests. With easy onboarding a social feed and calendar reminders Uni Squared makes it simple to stay connected meet new people and make the most of your college experience.</p>
 
-  
+ <h2>Demo Website</h2> 
+<p>https://eokunborportfolio.my.canva.site/uni-squared-app-showcase</p>
   
 <h2>🧐 Features</h2>
 
